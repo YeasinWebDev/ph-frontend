@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { config } from "@/config";
 import { cn } from "@/lib/utils";
 import { useLoginMutation } from "@/redux/feature/auth/auth.api";
 import { loginFormSchema, type LoginFormSchemaType } from "@/validation/login.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 // import { useLoginMutation } from "@/redux/features/auth/auth.api";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
@@ -23,13 +24,18 @@ export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivE
   const [login] = useLoginMutation();
   const onSubmit = async (data: LoginFormSchemaType) => {
     try {
-      console.log(data, "data");
       const res = await login(data).unwrap();
-      console.log(res);
-    } catch (err:any) {
-      if (err.status === 500) {
-        toast.error("Your account is not verified");
+      navigate("/");
+    } catch (err: any) {
+      if (err.data.message === "User not found") {
+        toast.error(err.data.message);
+      } else if (err.data.message === "Invalid Password") {
+        toast.error(err.data.message);
+      } else if (err.data.message === "User is not verified") {
         navigate("/verify", { state: data.email });
+        toast.error(err.data.message);
+      } else {
+        toast.error(err.data.message);
       }
     }
   };
@@ -83,7 +89,14 @@ export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivE
           <span className="relative z-10 bg-background px-2 text-muted-foreground">Or continue with</span>
         </div>
 
-        <Button type="button" variant="outline" className="w-full cursor-pointer">
+        <Button
+          onClick={() => {
+            window.location.href = `${config.baseUrl}/auth/google`;
+          }}
+          type="button"
+          variant="outline"
+          className="w-full cursor-pointer"
+        >
           Login with Google
         </Button>
       </div>

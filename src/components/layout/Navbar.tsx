@@ -1,18 +1,11 @@
 import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Link } from "react-router";
 import Logo from "@/assets/icons/logo";
 import { ModeToggle } from "./mode-toggle";
+import { authApi, useLogOutMutation, useUserInfoQuery } from "@/redux/feature/auth/auth.api";
+import { useAppDispatch } from "@/redux/hooks";
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -21,6 +14,15 @@ const navigationLinks = [
 ];
 
 export default function Navbar() {
+  const { data } = useUserInfoQuery({});
+  const [logout] = useLogOutMutation()
+  const dispatch = useAppDispatch()
+
+  const handleLogOut = async() => {
+    await logout({})
+    dispatch(authApi.util.resetApiState())
+  }
+  
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 flex h-16 items-center justify-between gap-4">
@@ -29,11 +31,7 @@ export default function Navbar() {
           {/* Mobile menu trigger */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button
-                className="group size-8 md:hidden"
-                variant="ghost"
-                size="icon"
-              >
+              <Button className="group size-8 md:hidden" variant="ghost" size="icon">
                 <svg
                   className="pointer-events-none"
                   width={16}
@@ -50,10 +48,7 @@ export default function Navbar() {
                     d="M4 12L20 12"
                     className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
                   />
-                  <path
-                    d="M4 12H20"
-                    className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] group-aria-expanded:rotate-45"
-                  />
+                  <path d="M4 12H20" className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] group-aria-expanded:rotate-45" />
                   <path
                     d="M4 12H20"
                     className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[135deg]"
@@ -85,10 +80,7 @@ export default function Navbar() {
               <NavigationMenuList className="gap-2">
                 {navigationLinks.map((link, index) => (
                   <NavigationMenuItem key={index}>
-                    <NavigationMenuLink
-                      asChild
-                      className="text-muted-foreground hover:text-primary py-1.5 font-medium"
-                    >
+                    <NavigationMenuLink asChild className="text-muted-foreground hover:text-primary py-1.5 font-medium">
                       <Link to={link.href}>{link.label}</Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
@@ -100,9 +92,13 @@ export default function Navbar() {
         {/* Right side */}
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <Button asChild className="text-sm">
-            <Link to="/login">Login</Link>
-          </Button>
+          {data?.data?.email ? (
+            <Button className="cursor-pointer" variant={"outline"} onClick={handleLogOut}>Logout</Button>
+          ) : (
+            <Button asChild className="text-sm cursor-pointer">
+              <Link to="/login">Login</Link>
+            </Button>
+          )}
         </div>
       </div>
     </header>
