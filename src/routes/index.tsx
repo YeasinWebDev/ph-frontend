@@ -27,7 +27,6 @@ const router = createBrowserRouter([
     path: "/admin",
     Component: () => (
       <Suspense fallback={<Loader />}>
-          <DashboardLayout />
           {React.createElement(WithAuth(DashboardLayout,"SUPER_ADMIN"))}
       </Suspense>
     ),

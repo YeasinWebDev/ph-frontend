@@ -9,8 +9,6 @@ export const getSidebarItems = (userRole: TUserRole) => {
   switch (userRole) {
     case UserRole.superAdmin:
       return [...AdminSidebar];
-    case UserRole.admin:
-      return [...AdminSidebar];
     case UserRole.user:
       return [...userSidebar];
     default:
