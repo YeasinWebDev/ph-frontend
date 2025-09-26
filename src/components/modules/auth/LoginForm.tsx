@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 // import { useLoginMutation } from "@/redux/features/auth/auth.api";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const navigate = useNavigate();

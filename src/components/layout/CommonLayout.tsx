@@ -4,9 +4,9 @@ import Navbar from "./Navbar";
 
 export function CommonLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col ">
       <Navbar />
-      <div className="grow-1">{children}</div>
+      <div className="grow-1 container mx-auto">{children}</div>
       <Footer />
     </div>
   );

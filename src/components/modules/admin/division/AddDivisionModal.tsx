@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAddDivisionMutation } from "@/redux/feature/division/division.api";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 interface FormData {
   name: string;

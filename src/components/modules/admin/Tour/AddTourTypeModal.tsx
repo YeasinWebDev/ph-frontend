@@ -4,7 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useCreateTourTypeMutation } from "@/redux/feature/tour/tour.api";
 import { useForm, type FieldValues } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 export function AddTourTypeModal() {
   const form = useForm();

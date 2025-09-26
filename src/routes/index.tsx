@@ -8,6 +8,10 @@ import { WithAuth } from "@/utils/withAuth";
 
 // Lazy load components
 const App = lazy(() => import("@/App"));
+const Home = lazy(() => import("@/pages/Home"));
+const Tours = lazy(() => import("@/pages/Tours"));
+const TourDetails = lazy(() => import("@/pages/TourDetails"));
+const Booking = lazy(() => import("@/pages/Booking"));
 const DashboardLayout = lazy(() => import("@/components/layout/DashboardLayout"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
@@ -22,46 +26,59 @@ const router = createBrowserRouter([
         <App />
       </Suspense>
     ),
+    children: [
+      {
+        index: true,
+        Component: () => (
+          <Suspense fallback={<Loader />}>
+            <Home />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/tours",
+        Component: () => (
+          <Suspense fallback={<Loader />}>
+            <Tours />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/tours/:slug", 
+        Component: () => (
+          <Suspense fallback={<Loader />}>
+            <TourDetails />
+          </Suspense>
+        ),
+      },{
+        path:"/booking/:id",
+        Component: () => (
+          <Suspense fallback={<Loader />}>
+            <Booking />
+          </Suspense>
+        )
+      }
+    ],
   },
   {
     path: "/admin",
-    Component: () => (
-      <Suspense fallback={<Loader />}>
-          {React.createElement(WithAuth(DashboardLayout,"SUPER_ADMIN"))}
-      </Suspense>
-    ),
+    Component: () => <Suspense fallback={<Loader />}>{React.createElement(WithAuth(DashboardLayout, "SUPER_ADMIN"))}</Suspense>,
     children: [
       { index: true, element: <Navigate to="/admin/analytics" /> },
       ...generateRoutes(AdminSidebar).map(({ path, Component }) => ({
         path,
-        Component: Component
-          ? () => (
-              <Suspense fallback={<Loader />}>
-                {React.createElement(WithAuth(Component,"SUPER_ADMIN"))}
-              </Suspense>
-            )
-          : undefined,
+        Component: Component ? () => <Suspense fallback={<Loader />}>{React.createElement(WithAuth(Component, "SUPER_ADMIN"))}</Suspense> : undefined,
       })),
     ],
   },
   {
     path: "/user",
-    Component: () => (
-      <Suspense fallback={<Loader />}>
-        {React.createElement(WithAuth(DashboardLayout,"USER"))}
-      </Suspense>
-    ),
+    Component: () => <Suspense fallback={<Loader />}>{React.createElement(WithAuth(DashboardLayout, "USER"))}</Suspense>,
     children: [
       { index: true, element: <Navigate to="/user/booking" /> },
       ...generateRoutes(userSidebar).map(({ path, Component }) => ({
         path,
-        Component: Component
-          ? () => (
-              <Suspense fallback={<Loader />}>
-                {React.createElement(WithAuth(Component,"USER"))}
-              </Suspense>
-            )
-          : undefined,
+        Component: Component ? () => <Suspense fallback={<Loader />}>{React.createElement(WithAuth(Component, "USER"))}</Suspense> : undefined,
       })),
     ],
   },

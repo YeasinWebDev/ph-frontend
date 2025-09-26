@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useGetAllToursTypeQuery, useRemoveTourTypeMutation } from "@/redux/feature/tour/tour.api";
 
 import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 export default function AddTourType() {
   const { data } = useGetAllToursTypeQuery(undefined);

@@ -6,7 +6,7 @@ import router from "./routes/index.tsx";
 import { ThemeProvider } from "./provider/theme.provider.tsx";
 import { Provider as ReduxProvider } from "react-redux";
 import { store } from "./redux/store.ts";
-import { Toaster } from "sonner";
+import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

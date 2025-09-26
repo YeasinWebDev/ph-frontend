@@ -16,7 +16,7 @@ import { useCreateTourMutation, useGetAllToursTypeQuery } from "@/redux/feature/
 import { useGetDivisionsQuery } from "@/redux/feature/division/division.api";
 import Loader from "@/components/Loader";
 import MultipleImageUploader from "@/components/MultipleImageUploader ";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 function AddTour() {
   const [images, setImages] = React.useState<File[] | []>([]);

@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { href, Link } from "react-router";
-import Logo from "@/assets/icons/logo";
+import { Link } from "react-router";
+import Logo from "@/assets/images/logo.png";
 import { ModeToggle } from "./mode-toggle";
 import { authApi, useLogOutMutation, useUserInfoQuery } from "@/redux/feature/auth/auth.api";
 import { useAppDispatch } from "@/redux/hooks";
@@ -11,6 +11,7 @@ import { UserRole } from "@/constants/role";
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
   { href: "/", label: "Home", role: "public" },
+  { href: "/tours", label: "Tours", role: "public" },
   { href: "/about", label: "About", role: "public" },
   { href: "/admin", label: "Dashboard", role: UserRole.superAdmin },
   { href: "/user", label: "Dashboard", role: UserRole.user },
@@ -75,9 +76,9 @@ export default function Navbar() {
           </Popover>
           {/* Main nav */}
           <div className="flex items-center gap-6">
-            <a href="#" className="text-primary hover:text-primary/90">
-              <Logo />
-            </a>
+            <Link to="/" className="text-primary hover:text-primary/90">
+              <img src={Logo} alt="Logo" className="h-14 w-14" />
+            </Link>
             {/* Navigation menu */}
             <NavigationMenu className="max-md:hidden">
               <NavigationMenuList className="gap-2">
