@@ -3,7 +3,6 @@ import { useUserInfoQuery } from "@/redux/feature/auth/auth.api";
 import { useCreateBookingMutation } from "@/redux/feature/booking/booking.api";
 import { useGetAllToursTypeQuery, useGetSingleTourQuery } from "@/redux/feature/tour/tour.api";
 import { format } from "date-fns";
-// import { useCreateBookingMutation } from "@/redux/features/booking/booking.api";
 import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { FiMinus } from "react-icons/fi";
@@ -65,7 +64,7 @@ export default function Booking() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || tourTypeIsLoading) {
     return <p>Loading...</p>;
   }
 

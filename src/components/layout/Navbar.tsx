@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import Logo from "@/assets/images/logo.png";
 import { ModeToggle } from "./mode-toggle";
 import { authApi, useLogOutMutation, useUserInfoQuery } from "@/redux/feature/auth/auth.api";
@@ -85,7 +85,7 @@ export default function Navbar() {
                 {navigationLinks.map((link, index) => (
                   <div key={index}>
                     {link.role === "public" && (
-                      <NavigationMenuItem >
+                      <NavigationMenuItem>
                         <NavigationMenuLink asChild className="text-muted-foreground hover:text-primary py-1.5 font-medium">
                           <Link to={link.href}>{link.label}</Link>
                         </NavigationMenuLink>
@@ -106,6 +106,10 @@ export default function Navbar() {
         </div>
         {/* Right side */}
         <div className="flex items-center gap-2">
+         { data?.data?.name && <Link to="/profile">
+            <h4 className="w-10 h-10 border rounded-full flex items-center justify-center bg-primary">{data?.data?.name.split(" ")[0].charAt(0)}</h4>
+          </Link>}
+
           <ModeToggle />
           {data?.data?.email ? (
             <Button className="cursor-pointer" variant={"outline"} onClick={handleLogOut}>

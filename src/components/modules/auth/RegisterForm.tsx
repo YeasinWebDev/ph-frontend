@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { useRegisterMutation } from "@/redux/features/auth/auth.api";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import Password from "@/components/ui/Password";
 import { registerSchema, type RegisterSchemaType } from "@/validation/register.validation";
 import { useRegisterMutation } from "@/redux/feature/auth/auth.api";
@@ -35,7 +35,7 @@ export function RegisterForm({ className, ...props }: React.HTMLAttributes<HTMLD
 
     try {
       const result = await register(userInfo).unwrap();
-      console.log(result);
+      localStorage.setItem("user", JSON.stringify(result));
       toast.success("User created successfully");
       navigate("/verify");
     } catch (error) {

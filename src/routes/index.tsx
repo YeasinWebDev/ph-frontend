@@ -12,6 +12,7 @@ const Home = lazy(() => import("@/pages/Home"));
 const Tours = lazy(() => import("@/pages/Tours"));
 const TourDetails = lazy(() => import("@/pages/TourDetails"));
 const Booking = lazy(() => import("@/pages/Booking"));
+const Profile = lazy(() => import("@/pages/Profile"));
 const DashboardLayout = lazy(() => import("@/components/layout/DashboardLayout"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
@@ -50,11 +51,20 @@ const router = createBrowserRouter([
             <TourDetails />
           </Suspense>
         ),
-      },{
+      },
+      {
         path:"/booking/:id",
         Component: () => (
           <Suspense fallback={<Loader />}>
             <Booking />
+          </Suspense>
+        )
+      },
+      {
+        path:"/profile",
+        Component: () => (
+          <Suspense fallback={<Loader />}>
+            <Profile />
           </Suspense>
         )
       }

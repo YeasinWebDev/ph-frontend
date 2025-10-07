@@ -7,7 +7,6 @@ import { useLoginMutation } from "@/redux/feature/auth/auth.api";
 import { loginFormSchema, type LoginFormSchemaType } from "@/validation/login.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-// import { useLoginMutation } from "@/redux/features/auth/auth.api";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -24,19 +23,10 @@ export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivE
   const [login] = useLoginMutation();
   const onSubmit = async (data: LoginFormSchemaType) => {
     try {
-      const res = await login(data).unwrap();
+      await login(data).unwrap();
       navigate("/");
-    } catch (err: any) {
-      if (err.data.message === "User not found") {
-        toast.error(err.data.message);
-      } else if (err.data.message === "Invalid Password") {
-        toast.error(err.data.message);
-      } else if (err.data.message === "User is not verified") {
-        navigate("/verify", { state: data.email });
-        toast.error(err.data.message);
-      } else {
-        toast.error(err.data.message);
-      }
+    } catch (err) {
+      toast.error("please check your email and password and if not verify please verify your account");
     }
   };
 
@@ -79,7 +69,7 @@ export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivE
               )}
             />
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full cursor-pointer">
               Login
             </Button>
           </form>
