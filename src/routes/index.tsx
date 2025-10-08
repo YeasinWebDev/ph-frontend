@@ -13,6 +13,10 @@ const Tours = lazy(() => import("@/pages/Tours"));
 const TourDetails = lazy(() => import("@/pages/TourDetails"));
 const Booking = lazy(() => import("@/pages/Booking"));
 const Profile = lazy(() => import("@/pages/Profile"));
+const PaymentSuccess = lazy(() => import("@/pages/PaymentSuccess"));
+const PaymentCancel = lazy(() => import("@/pages/PaymentCancel"));
+const PaymentFailed = lazy(() => import("@/pages/PaymentFailed"));
+
 const DashboardLayout = lazy(() => import("@/components/layout/DashboardLayout"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
@@ -45,7 +49,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/tours/:slug", 
+        path: "/tours/:slug",
         Component: () => (
           <Suspense fallback={<Loader />}>
             <TourDetails />
@@ -53,21 +57,21 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path:"/booking/:id",
+        path: "/booking/:id",
         Component: () => (
           <Suspense fallback={<Loader />}>
             <Booking />
           </Suspense>
-        )
+        ),
       },
       {
-        path:"/profile",
+        path: "/profile",
         Component: () => (
           <Suspense fallback={<Loader />}>
             <Profile />
           </Suspense>
-        )
-      }
+        ),
+      },
     ],
   },
   {
@@ -121,6 +125,30 @@ const router = createBrowserRouter([
     Component: () => (
       <Suspense fallback={<Loader />}>
         <Unauthorize />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/payment/success",
+    Component: () => (
+      <Suspense fallback={<Loader />}>
+        <PaymentSuccess />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/payment/cancel",
+    Component: () => (
+      <Suspense fallback={<Loader />}>
+        <PaymentCancel />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/payment/fail",
+    Component: () => (
+      <Suspense fallback={<Loader />}>
+        <PaymentFailed />
       </Suspense>
     ),
   },

@@ -32,8 +32,8 @@ export default function UserProfileCard() {
               <div className="flex flex-col items-start">
                 <h2 className="text-2xl font-semibold ">{user?.name}</h2>
                 <p className="text-sm  mt-1">{user?.email}</p>
-                <p className="text-sm  mt-1 font-semibold"> phone: {user?.phone || "N/A"}</p>
-                <p className="text-sm  mt-1 font-semibold">address: {user?.address || "N/A"}</p>
+                <p className="text-sm  mt-1 font-semibold"> <span className="text-slate-700 dark:text-gray-400">Phone:</span> {user?.phone || "N/A"}</p>
+                <p className="text-sm  mt-1 font-semibold"> <span className="text-slate-700 dark:text-gray-400">Address:</span> {user?.address || "N/A"}</p>
               </div>
 
               <div className="items-center sm:space-x-2">
@@ -75,12 +75,12 @@ export default function UserProfileCard() {
               </div>
             </div>
 
-            <div className="mt-6 text-sm text-slate-500 flex flex-col items-start">
+            <div className="mt-6 text-sm dark:text-white text-slate-500 flex flex-col items-start">
               <p>
-                <span className="font-medium text-slate-700">Created:</span> {created}
+                <span className="font-medium text-slate-700 dark:text-gray-400">Created:</span> {created}
               </p>
               <p className="mt-1">
-                <span className="font-medium text-slate-700">Updated:</span> {updated}
+                <span className="font-medium text-slate-700 dark:text-gray-400">Updated:</span> {updated}
               </p>
             </div>
 

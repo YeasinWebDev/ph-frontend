@@ -22,7 +22,7 @@ interface EditProfileModalProps {
 export default function EditProfileModal({ user, refetch }: EditProfileModalProps) {
   const [open, setOpen] = useState(false);
   const [showVerifyInput, setShowVerifyInput] = useState(false);
-  const { register, handleSubmit, reset } = useForm<FormData>({
+  const { register, handleSubmit } = useForm<FormData>({
     defaultValues: {
       name: user?.name || "",
       phone : user?.phone || "",

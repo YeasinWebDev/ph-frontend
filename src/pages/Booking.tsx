@@ -8,6 +8,7 @@ import { FaPlus } from "react-icons/fa6";
 import { FiMinus } from "react-icons/fi";
 import { useParams } from "react-router";
 import { toast } from "react-hot-toast";
+import Loader from "@/components/Loader";
 
 export default function Booking() {
   const [guestCount, setGuestCount] = useState(1);
@@ -42,7 +43,7 @@ export default function Booking() {
 
     if (data) {
       bookingData = {
-        tour: id,
+        tour: data._id,
         guestCount: guestCount,
       };
     }
@@ -55,7 +56,7 @@ export default function Booking() {
       const res = await createBooking(bookingData).unwrap();
       
       if (res.success) {
-        window.open(res.data.paymentUrl);
+        window.open(res?.data?.payment);
       }
     } catch (err:any) {
       if(err.status === undefined){
@@ -65,7 +66,7 @@ export default function Booking() {
   };
 
   if (isLoading || tourTypeIsLoading) {
-    return <p>Loading...</p>;
+    return <Loader/>;
   }
 
 
