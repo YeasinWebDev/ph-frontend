@@ -3,7 +3,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { config } from "@/config";
 import { cn } from "@/lib/utils";
-import { useLoginMutation } from "@/redux/feature/auth/auth.api";
+import { useForgetPasswordMutation, useLoginMutation } from "@/redux/feature/auth/auth.api";
 import { loginFormSchema, type LoginFormSchemaType } from "@/validation/login.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -22,6 +22,7 @@ export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivE
   });
 
   const [login] = useLoginMutation();
+  const [forgetPassword] = useForgetPasswordMutation();
   const onSubmit = async (data: LoginFormSchemaType) => {
     try {
       await login(data).unwrap();
@@ -30,6 +31,20 @@ export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivE
       console.error(err);
       const error = err as { data?: ApiError };
       toast.error(error.data?.message!);
+    }
+  };
+
+  const handleForgetPassword = async () => {
+    const email = form.getValues("email");
+    if (email === "") {
+      return toast.error("Please enter your email");
+    }
+
+    try {
+      await forgetPassword({ email }).unwrap();
+      toast.success("Please check your email to reset your password");
+    } catch (error: any) {
+      toast.error(error?.data?.message!);
     }
   };
 
@@ -75,6 +90,9 @@ export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivE
             <Button type="submit" className="w-full cursor-pointer">
               Login
             </Button>
+            <p onClick={handleForgetPassword} className="text-center text-[12px] text-gray-400 font-semibold cursor-pointer">
+              Forget your password?
+            </p>
           </form>
         </Form>
 

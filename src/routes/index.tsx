@@ -16,6 +16,7 @@ const Profile = lazy(() => import("@/pages/Profile"));
 const PaymentSuccess = lazy(() => import("@/pages/PaymentSuccess"));
 const PaymentCancel = lazy(() => import("@/pages/PaymentCancel"));
 const PaymentFailed = lazy(() => import("@/pages/PaymentFailed"));
+const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 
 const DashboardLayout = lazy(() => import("@/components/layout/DashboardLayout"));
 const Login = lazy(() => import("@/pages/Login"));
@@ -152,6 +153,14 @@ const router = createBrowserRouter([
       </Suspense>
     ),
   },
+  {
+    path:"/reset-password",
+    Component: () => (
+      <Suspense fallback={<Loader />}>
+        <ResetPassword />
+      </Suspense>
+    ),
+  }
 ]);
 
 export default router;
