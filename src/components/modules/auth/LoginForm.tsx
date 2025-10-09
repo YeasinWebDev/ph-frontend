@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import type { ApiError } from "@/types";
 
 export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const navigate = useNavigate();
@@ -26,7 +27,9 @@ export function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivE
       await login(data).unwrap();
       navigate("/");
     } catch (err) {
-      toast.error("please check your email and password and if not verify please verify your account");
+      console.error(err);
+      const error = err as { data?: ApiError };
+      toast.error(error.data?.message!);
     }
   };
 

@@ -1,4 +1,3 @@
-import { UserRole } from './../constants/role';
 import type { ComponentType } from "react";
 
 export interface IResponse<T> {
@@ -17,6 +16,15 @@ export interface ISidebarItem{
     component:ComponentType
   }[]
 }
+
+export type ApiError = {
+  status: number;
+  success: boolean;
+  message: string;
+  errorSources: any[]; 
+  stack?: string;
+};
+
 
 
 export type TUserRole = "USER" | "ADMIN" | "SUPER_ADMIN";

@@ -34,8 +34,8 @@ function Tours() {
       <div className="md:col-span-9 md:w-full">
         {data?.tours?.map((item) => (
           <div key={item.slug} className="border border-muted rounded-lg shadow-md overflow-hidden mb-6 flex flex-col md:flex-row w-[18rem] md:w-full">
-            <div className="md:w-2/5 bg-red-500 flex-shrink-0">
-              <img src={item.images[0]} alt={item.name} className="object-cover w-full h-full " />
+            <div className="md:w-2/5  flex-shrink-0">
+              <img src={item.images[0]} alt={"location image"} className="object-cover w-full h-full " />
             </div>
             <div className="p-6 flex-1">
               <h3 className="text-xl font-semibold mb-2">{item.name}</h3>

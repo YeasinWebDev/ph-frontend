@@ -99,10 +99,10 @@ export default function TourFilters() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block col-span-3 w-full h-[250px] border border-muted rounded-md p-5 lg:sticky top-10">{FilterContent}</div>
+      <div className="hidden lg:block col-span-3 w-full h-[250px] border border-muted rounded-md p-5 lg:sticky top-10 shadow-xl">{FilterContent}</div>
 
       {/* Mobile/Tablet Popup */}
-      <div className="lg:hidden w-full flex md:justify-end mb-4 ">
+      <div className="lg:hidden w-full flex md:justify-end mb-4 shadow-xl">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="icon" className="fixed bottom-6 right-6 shadow-lg bg-primary rounded-full border-1 border-white w-12 h-12">

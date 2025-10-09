@@ -26,10 +26,28 @@ export const axiosBaseQuery =
       return { data: result.data };
     } catch (axiosError) {
       const err = axiosError as AxiosError;
+      
+      // Safe access to error response
+      const responseData = err.response?.data;
+      
+      if (responseData && typeof responseData === 'object') {
+        return {
+          error: {
+            status: err.response?.status,
+            data: responseData,
+          },
+        };
+      }
+      
+      // Handle cases where response.data might be undefined
       return {
         error: {
-          status: err.response?.status,
-          data: err.response?.data || err.message,
+          status: err.response?.status || 500,
+          data: {
+            success: false,
+            message: err.message || "Something went wrong",
+            errorSources: [],
+          },
         },
       };
     }
