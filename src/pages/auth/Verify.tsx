@@ -9,7 +9,7 @@ import { Dot } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import z from "zod";
 const FormSchema = z.object({
   pin: z.string().min(6, {

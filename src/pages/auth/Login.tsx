@@ -1,9 +1,15 @@
 import Logo from "@/assets/images/logo.png";
 import TravelLogin from "@/assets/images/travel-login.jpg";
 import { LoginForm } from "@/components/modules/auth/LoginForm";
-import { Link } from "react-router";
+import Me from "@/utils/Me";
+import { Link, useNavigate } from "react-router";
 
 export default function Login() {
+ const data = Me()
+ const navigation = useNavigate()
+ if(data){
+  return navigation("/")
+ }
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">

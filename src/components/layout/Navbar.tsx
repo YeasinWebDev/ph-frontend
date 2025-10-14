@@ -4,9 +4,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Link } from "react-router-dom";
 import Logo from "@/assets/images/logo.png";
 import { ModeToggle } from "./mode-toggle";
-import { authApi, useLogOutMutation, useUserInfoQuery } from "@/redux/feature/auth/auth.api";
+import { authApi, useLogOutMutation } from "@/redux/feature/auth/auth.api";
 import { useAppDispatch } from "@/redux/hooks";
 import { UserRole } from "@/constants/role";
+import Me from "@/utils/Me";
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -18,7 +19,7 @@ const navigationLinks = [
 ];
 
 export default function Navbar() {
-  const { data } = useUserInfoQuery({});
+  const data = Me()
   const [logout] = useLogOutMutation();
   const dispatch = useAppDispatch();
 

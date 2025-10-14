@@ -8,20 +8,20 @@ import { WithAuth } from "@/utils/withAuth";
 
 // Lazy load components
 const App = lazy(() => import("@/App"));
-const Home = lazy(() => import("@/pages/Home"));
-const Tours = lazy(() => import("@/pages/Tours"));
-const TourDetails = lazy(() => import("@/pages/TourDetails"));
-const Booking = lazy(() => import("@/pages/Booking"));
-const Profile = lazy(() => import("@/pages/Profile"));
-const PaymentSuccess = lazy(() => import("@/pages/PaymentSuccess"));
-const PaymentCancel = lazy(() => import("@/pages/PaymentCancel"));
-const PaymentFailed = lazy(() => import("@/pages/PaymentFailed"));
-const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
+const Home = lazy(() => import("@/pages/home/Home"));
+const Tours = lazy(() => import("@/pages/home/Tours"));
+const TourDetails = lazy(() => import("@/pages/home/TourDetails"));
+const Booking = lazy(() => import("@/pages/home/Booking"));
+const Profile = lazy(() => import("@/pages/home/Profile"));
+const PaymentSuccess = lazy(() => import("@/pages/payment/PaymentSuccess"));
+const PaymentCancel = lazy(() => import("@/pages/payment/PaymentCancel"));
+const PaymentFailed = lazy(() => import("@/pages/payment/PaymentFailed"));
+const ResetPassword = lazy(() => import("@/pages/auth/ResetPassword"));
 
 const DashboardLayout = lazy(() => import("@/components/layout/DashboardLayout"));
-const Login = lazy(() => import("@/pages/Login"));
-const Register = lazy(() => import("@/pages/Register"));
-const Verify = lazy(() => import("@/pages/Verify"));
+const Login = lazy(() => import("@/pages/auth/Login"));
+const Register = lazy(() => import("@/pages/auth/Register"));
+const Verify = lazy(() => import("@/pages/auth/Verify"));
 const Unauthorize = lazy(() => import("@/pages/unauthorize"));
 
 const router = createBrowserRouter([

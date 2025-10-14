@@ -1,18 +1,19 @@
 import TravelRegister from "@/assets/images/travel-register.jpg";
 import { RegisterForm } from "@/components/modules/auth/RegisterForm";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Logo from "@/assets/images/logo.png";
-
+import Me from "@/utils/Me";
 
 export default function Register() {
+  const data = Me();
+  const navigation = useNavigate();
+  if (data) {
+    return navigation("/");
+  }
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="relative hidden bg-muted lg:block">
-        <img
-          src={TravelRegister}
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.8]"
-        />
+        <img src={TravelRegister} alt="Image" className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.8]" />
       </div>
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
