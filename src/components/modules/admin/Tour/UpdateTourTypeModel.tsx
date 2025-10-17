@@ -2,33 +2,40 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useCreateTourTypeMutation } from "@/redux/feature/tour/tour.api";
+import { useUpdateTourTypeMutation } from "@/redux/feature/tour/tour.api";
+import { Edit2 } from "lucide-react";
 import { useForm, type FieldValues } from "react-hook-form";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 
-export function AddTourTypeModal() {
-  const form = useForm();
-  const [addTourType] = useCreateTourTypeMutation();
+function UpdateTourTypeModel({name,tourTypeId}:{name:string,tourTypeId:string}) {
+  const form = useForm({
+    defaultValues: {
+      name: name,
+    },
+  });
+  const [UpdateTourType] = useUpdateTourTypeMutation();
 
   const onSubmit = async (data: FieldValues) => {
-    const res = await addTourType({ name: data.name }).unwrap();
+    const res = await UpdateTourType({id:tourTypeId, name: data.name }).unwrap();
+    
     if (res.success) {
-      toast.success("Tour Type Added");
+      toast.success("Tour Type Updated");
     }
   };
-
   return (
     <Dialog>
       <form>
         <DialogTrigger asChild>
-          <Button className="cursor-pointer">Add Tour Type</Button>
+          <Button className="cursor-pointer">
+            <Edit2 />
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add Tour Type</DialogTitle>
+            <DialogTitle>Update Tour Type</DialogTitle>
           </DialogHeader>
           <Form {...form}>
-            <form id="add-tour-type" onSubmit={form.handleSubmit(onSubmit)}>
+            <form id="update-tour-type" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
                 name="name"
@@ -36,7 +43,7 @@ export function AddTourTypeModal() {
                   <FormItem>
                     <FormLabel>Tour Type Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Tour Type Name" {...field} value={field.value || ""} />
+                      <Input placeholder="Tour Type Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -50,8 +57,8 @@ export function AddTourTypeModal() {
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <DialogClose asChild>
-              <Button type="submit" form="add-tour-type">
-                Save changes
+              <Button type="submit" form="update-tour-type">
+                update changes
               </Button>
             </DialogClose>
           </DialogFooter>
@@ -60,3 +67,5 @@ export function AddTourTypeModal() {
     </Dialog>
   );
 }
+
+export default UpdateTourTypeModel;

@@ -1,486 +1,108 @@
-import React from "react";
-// import MultipleImageUploader from "@/components/MultipleImageUploader";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useFieldArray, useForm } from "react-hook-form";
-import { CalendarIcon, Plus, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { format, formatISO } from "date-fns";
-import { Textarea } from "@/components/ui/textarea";
-import { useCreateTourMutation, useGetAllToursTypeQuery } from "@/redux/feature/tour/tour.api";
-import { useGetDivisionsQuery } from "@/redux/feature/division/division.api";
 import Loader from "@/components/Loader";
-import MultipleImageUploader from "@/components/MultipleImageUploader ";
-import { toast } from "react-hot-toast";
+import TourModel from "@/components/modules/admin/Tour/TourModel";
+import { Button } from "@/components/ui/button";
+import { useDeleteTourMutation, useGetAllToursQuery } from "@/redux/feature/tour/tour.api";
+import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 function AddTour() {
-  const [images, setImages] = React.useState<File[] | []>([]);
-  const { data: TourTypeData, isLoading: isTourTypeLoading } = useGetAllToursTypeQuery(undefined);
-  const { data: divisionData, isLoading: isDivisionLoading } = useGetDivisionsQuery(undefined);
-  const [addTour, { isLoading }] = useCreateTourMutation();
-  const defaultValues = {
-    name: "",
-    description: "",
-    location: "",
-    costFrom: "",
-    startDate: new Date(),
-    endDate: new Date(),
-    departureLocation: "",
-    arrivalLocation: "",
-    included: [{ value: "" }],
-    excluded: [{ value: "" }],
-    amenities: [],
-    tourPlan: [],
-    maxGuest: "",
-    minAge: "",
-    division: "",
-    tourType: "",
-  };
-  const form = useForm({ defaultValues });
-
-  const {
-    fields: includedFields,
-    append: appendIncluded,
-    remove: removeIncluded,
-  } = useFieldArray({
-    control: form.control,
-    name: "included",
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useGetAllToursQuery({
+    page,
+    limit: 5,
   });
 
-  const {
-    fields: excludedFields,
-    append: appendExcluded,
-    remove: removeExcluded,
-  } = useFieldArray({
-    control: form.control,
-    name: "excluded",
-  });
+  const [deleteTour] = useDeleteTourMutation();
 
-  if (isTourTypeLoading || isDivisionLoading) {
+  const totalPages = data?.meta?.totalPage;
+
+  if (isLoading) {
     return <Loader />;
   }
 
-  const divisionOptions = divisionData?.divisions?.map((division) => ({
-    value: division._id,
-    label: division.name,
-  }));
-
-  const tourTypeOptions = TourTypeData?.tourTypes?.map((tourType) => ({
-    value: tourType._id,
-    label: tourType.name,
-  }));
-
-  const handleSubmit = async (data) => {
-    try {
-      // Create tour data with correct date format
-      const tourData = {
-        ...data,
-        startDate: formatISO(data.startDate),
-        endDate: formatISO(data.endDate),
-        costFrom: Number(data.costFrom),
-        maxGuest: Number(data.maxGuest),
-        minAge: Number(data.minAge),
-        included: data.included.map((item: { value: string }) => item.value),
-      };
-
-      // Create FormData
-      const formData = new FormData();
-
-      // Append files
-      images.forEach((image) => {
-        formData.append("files", image);
-      });
-
-      formData.append("data", JSON.stringify(tourData));
-
-      // Send to backend
-      await addTour(formData).unwrap();
-
-      toast.success("Tour added successfully");
-      form.reset(defaultValues);
-      setImages([]);
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to add tour");
-    }
+  const handelDelete = async(id: string) => {
+    await deleteTour(id);
+    toast.success("Tour deleted successfully");
   };
 
   return (
-    <div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Add New Tour</CardTitle>
-          <CardDescription>Add a new tour to the system</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form id="add-tour-form" className="space-y-5" onSubmit={form.handleSubmit(handleSubmit)}>
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tour Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex gap-5">
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Location</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="costFrom"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Cost</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex gap-5">
-                <FormField
-                  control={form.control}
-                  name="departureLocation"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Departure Location</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="arrivalLocation"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Arrival Location</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex gap-5">
-                <FormField
-                  control={form.control}
-                  name="division"
-                  render={({ field }) => (
-                    <FormItem className="flex-1 ">
-                      <FormLabel>Division</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isDivisionLoading}>
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {divisionOptions?.map((item: { label: string; value: string }) => (
-                            <SelectItem key={item.value} value={item.value}>
-                              {item.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+    <div className="mb-5">
+      <div className="flex items-center justify-center flex-col">
+        <h1 className="text-3xl font-bold flex items-center justify-center mb-3">Add Tour</h1>
+        <TourModel isUpdate={false} />
+      </div>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="tourType"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Tour Type</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isTourTypeLoading}>
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {tourTypeOptions?.map((option: { value: string; label: string }) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+      <div className="md:col-span-9 md:w-ful flex flex-col items-center justify-center mt-10 lg:mx-20">
+        {data?.tours?.map((item) => (
+          <div key={item.slug} className="border border-muted rounded-lg shadow-md overflow-hidden mb-6 flex flex-col md:flex-row w-[18rem] md:w-full">
+            <div className="md:w-2/5  flex-shrink-0 relative">
+              <img src={item.images[0]} alt={"location image"} className="object-cover w-full h-full " />
+              <div className="absolute top-5 right-5 flex gap-2 items-center">
+                <Trash2 color="white" size={30} className="bg-red-600 p-1 rounded cursor-pointer" onClick={() => handelDelete(item._id)}/>
+                <TourModel isUpdate={true} tour={item}/>
               </div>
-              <div className="flex gap-5">
-                <FormField
-                  control={form.control}
-                  name="maxGuest"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Max Guest</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="minAge"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Minimum Age</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex gap-5">
-                <FormField
-                  control={form.control}
-                  name="startDate"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col flex-1">
-                      <FormLabel>Start Date</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                              {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={new Date(field.value)}
-                            onSelect={field.onChange}
-                            disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
-                            captionLayout="dropdown"
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="endDate"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col flex-1">
-                      <FormLabel>End Date</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                              {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={new Date(field.value)}
-                            onSelect={field.onChange}
-                            disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
-                            captionLayout="dropdown"
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            </div>
+            <div className="p-6 flex-1">
+              <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
+              <p className="text-muted-foreground mb-3">{item.description}</p>
+
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xl font-bold text-primary">From ৳{item?.costFrom!.toLocaleString()}</span>
+                <span className="text-sm text-muted-foreground">Max {item.maxGuest} guests</span>
               </div>
 
-              <div className="flex gap-5 items-stretch">
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} className="h-[205px]" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex-1 mt-5">
-                  <MultipleImageUploader onChange={setImages} />
+              <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                <div>
+                  <span className="font-medium">From:</span> {item.departureLocation}
                 </div>
-              </div>
-              <div className="border-t border-muted w-full "></div>
-              <div>
-                <div className="flex justify-between">
-                  <p className="font-semibold">Included</p>
-                  <Button type="button" variant="outline" size="icon" onClick={() => appendIncluded({ value: "" })}>
-                    <Plus />
-                  </Button>
+                <div>
+                  <span className="font-medium">To:</span> {item.arrivalLocation}
                 </div>
-
-                <div className="space-y-4 mt-4">
-                  {includedFields.map((item, index) => (
-                    <div className="flex gap-2" key={item.id}>
-                      <FormField
-                        control={form.control}
-                        key={item.id}
-                        name={`included.${index}.value`}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button onClick={() => removeIncluded(index)} variant="destructive" className="!bg-red-700" size="icon" type="button">
-                        <Trash2 />
-                      </Button>
-                    </div>
-                  ))}
+                <div>
+                  <span className="font-medium">Duration:</span> {item.tourPlan!.length} days
                 </div>
-              </div>
-              <div>
-                <div className="flex justify-between">
-                  <p className="font-semibold">Excluded</p>
-                  <Button type="button" variant="outline" size="icon" onClick={() => appendExcluded({ value: "" })}>
-                    <Plus />
-                  </Button>
-                </div>
-
-                <div className="space-y-4 mt-4">
-                  {excludedFields.map((item, index) => (
-                    <div className="flex gap-2" key={item.id}>
-                      <FormField
-                        control={form.control}
-                        name={`excluded.${index}.value`}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button onClick={() => removeExcluded(index)} variant="destructive" className="!bg-red-700" size="icon" type="button">
-                        <Trash2 />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {/* 
-
-              <div>
-                <div className="flex justify-between">
-                  <p className="font-semibold">Amenities</p>
-                  <Button type="button" variant="outline" size="icon" onClick={() => appendAmenities({ value: "" })}>
-                    <Plus />
-                  </Button>
-                </div>
-
-                <div className="space-y-4 mt-4">
-                  {amenitiesFields.map((item, index) => (
-                    <div className="flex gap-2" key={item.id}>
-                      <FormField
-                        control={form.control}
-                        name={`amenities.${index}.value`}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button onClick={() => removeAmenities(index)} variant="destructive" className="!bg-red-700" size="icon" type="button">
-                        <Trash2 />
-                      </Button>
-                    </div>
-                  ))}
+                <div>
+                  <span className="font-medium">Min Age:</span> {item.minAge}+
                 </div>
               </div>
 
-              <div>
-                <div className="flex justify-between">
-                  <p className="font-semibold">Tour Plan</p>
-                  <Button type="button" variant="outline" size="icon" onClick={() => appendTourPlan({ value: "" })}>
-                    <Plus />
-                  </Button>
-                </div>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {item?.amenities!?.slice(0, 3).map((amenity, index) => (
+                  <span key={index} className="px-2 py-1 bg-muted/50 text-primary text-xs rounded-full">
+                    {amenity}
+                  </span>
+                ))}
+                {item?.amenities!?.length > 3 && <span className="px-2 py-1 bg-muted/50 text-muted-foreground text-xs rounded-full">+{item?.amenities!?.length - 3} more</span>}
+              </div>
 
-                <div className="space-y-4 mt-4">
-                  {tourPlanFields.map((item, index) => (
-                    <div className="flex gap-2" key={item.id}>
-                      <FormField
-                        control={form.control}
-                        name={`tourPlan.${index}.value`}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button onClick={() => removeTourPlan(index)} variant="destructive" className="!bg-red-700" size="icon" type="button">
-                        <Trash2 />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div> */}
-            </form>
-          </Form>
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button type="submit" form="add-tour-form" disabled={isLoading}>
-            Create Tour
-          </Button>
-        </CardFooter>
-      </Card>
+              <Button asChild className="w-full">
+                <Link to={`/tours/${item?.slug}`}>View Details</Link>
+              </Button>
+            </div>
+          </div>
+        ))}
+        <div className="flex gap-4 mt-4 items-center md:justify-end w-[18rem] md:w-full ">
+          <button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+            className="px-4 py-2 bg-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <span className="px-2">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((prev) => (prev < totalPages! ? prev + 1 : prev))}
+            disabled={page === totalPages}
+            className="px-4 py-2 bg-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
