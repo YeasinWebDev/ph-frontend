@@ -15,27 +15,24 @@ function Tours() {
   const { data, isLoading } = useGetAllToursQuery({
     division,
     tourType,
-    page, 
-    limit: 5, 
+    page,
+    limit: 5,
   });
 
   const totalPages = data?.meta?.totalPage;
 
-  if(isLoading){
-    return (
-      <Loader/>
-    )
+  if (isLoading) {
+    return <Loader />;
   }
 
-  
   return (
-    <div className="container mx-auto md:px-5 py-8 lg:grid  lg:grid-cols-12 gap-5 relative flex flex-col items-center justify-center md:items-start">
+    <div className="container mx-auto relative flex flex-col items-center justify-center md:items-start">
       <TourFilters />
-      <div className="md:col-span-9 md:w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 items-center mx-auto gap-5">
         {data?.tours?.map((item) => (
-          <div key={item.slug} className="border border-muted rounded-lg shadow-md overflow-hidden mb-6 flex flex-col md:flex-row w-[18rem] md:w-full">
-            <div className="md:w-2/5  flex-shrink-0">
-              <img src={item.images[0]} alt={"location image"} className="object-cover w-full h-full " />
+          <div key={item.slug} className="border border-muted rounded-lg shadow-md overflow-hidden mb-6 flex flex-col w-[20rem] md:w-[22rem] lg:w-[25rem]">
+            <div className="flex-shrink-0">
+              <img src={item.images[0]} alt={"location image"} className="object-cover w-full h-[300px] " />
             </div>
             <div className="p-6 flex-1">
               <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
@@ -63,7 +60,7 @@ function Tours() {
 
               <div className="flex flex-wrap gap-2 mb-4">
                 {item?.amenities!?.slice(0, 3).map((amenity, index) => (
-                  <span key={index} className="px-2 py-1 bg-muted/50 text-primary text-xs rounded-full">
+                  <span key={index} className="px-2 py-1 bg-muted/50 text-primary text-xs font-semibold rounded-full">
                     {amenity}
                   </span>
                 ))}
@@ -76,26 +73,26 @@ function Tours() {
             </div>
           </div>
         ))}
-        <div className="flex gap-4 mt-4 items-center md:justify-end w-[18rem] md:w-full ">
-          <button
-            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1}
-            className="px-4 py-2 bg-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Prev
-          </button>
-          <span className="px-2">
-            Page {page} of {totalPages}
-          </span>
-          <button
-            onClick={() => setPage((prev) => (prev < totalPages! ? prev + 1 : prev))}
-            disabled={page === totalPages}
-            className="px-4 py-2 bg-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
       </div>
+      {data && data.tours.length > 4 && <div className="flex gap-4 mt-4 items-center justify-center w-full">
+        <button
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+          className="px-4 py-2 bg-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <span className="px-2">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          onClick={() => setPage((prev) => (prev < totalPages! ? prev + 1 : prev))}
+          disabled={page === totalPages}
+          className="px-4 py-2 bg-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>}
     </div>
   );
 }

@@ -8,11 +8,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useGetAllToursTypeQuery, useRemoveTourTypeMutation } from "@/redux/feature/tour/tour.api";
 
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 export default function AddTourType() {
-  const { data, isLoading } = useGetAllToursTypeQuery(undefined);
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useGetAllToursTypeQuery({
+    page,
+    limit: 5,
+  });
   const [removeTourType] = useRemoveTourTypeMutation();
+
+  const meta = data?.meta;
 
   const handleRemoveTourType = async (tourId: string) => {
     const toastId = toast.loading("Removing...");
@@ -31,11 +38,11 @@ export default function AddTourType() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-5">
-      <div className="flex flex-col items-center justify-center gap-2 my-8">
-        <h1 className="text-3xl font-semibold mb-2">Tour Types</h1>
+      <div className="flex flex-col items-center justify-center gap-2 mb-8">
+        <h1 className="text-3xl font-bold mb-2">Tour Types</h1>
         <AddTourTypeModal />
       </div>
-      <div className="border border-muted rounded-md">
+      <div className="border rounded-md shadow">
         <Table>
           <TableHeader>
             <TableRow>
@@ -60,6 +67,27 @@ export default function AddTourType() {
           </TableBody>
         </Table>
       </div>
+      {data && data?.tourTypes?.length > 4 && (
+        <div className="flex gap-4 mt-4 items-center justify-center">
+          <button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+            className="px-4 py-2 bg-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <span className="px-2">
+            Page {page} of {meta?.totalPage}
+          </span>
+          <button
+            onClick={() => setPage((prev) => (prev < meta?.totalPage! ? prev + 1 : prev))}
+            disabled={page === meta?.totalPage}
+            className="px-4 py-2 bg-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }

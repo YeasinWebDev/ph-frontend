@@ -1,16 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGetDivisionsQuery } from "@/redux/feature/division/division.api";
 import { useGetAllToursTypeQuery } from "@/redux/feature/tour/tour.api";
 import { useSearchParams } from "react-router";
-import { useState } from "react";
-import { Filter } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function TourFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [open, setOpen] = useState(false);
 
   const selectedDivision = searchParams.get("division") || undefined;
   const selectedTourType = searchParams.get("tourType") || undefined;
@@ -48,19 +43,12 @@ export default function TourFilters() {
   };
 
   const FilterContent = (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h1 className="font-semibold">Filters</h1>
-        <Button size="sm" variant="outline" onClick={handleClearFilter}>
-          Clear Filter
-        </Button>
-      </div>
-
-      <div>
-        <Label className="mb-2">Division to visit</Label>
-        <Select onValueChange={(value) => handleDivisionChange(value)} value={selectedDivision ? selectedDivision : ""} disabled={divisionIsLoading}>
+    <div className="flex flex-wrap md:flex-nowrap items-center justify-center gap-4 w-full">
+      {/* Division Select */}
+      <div className="min-w-[100px]">
+        <Select onValueChange={handleDivisionChange} value={selectedDivision || ""} disabled={divisionIsLoading}>
           <SelectTrigger className="w-full">
-            <SelectValue />
+            <SelectValue placeholder="Select Division" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -75,11 +63,11 @@ export default function TourFilters() {
         </Select>
       </div>
 
-      <div>
-        <Label className="mb-2">Tour Type</Label>
-        <Select onValueChange={handleTourTypeChange} value={selectedTourType ? selectedTourType : ""} disabled={tourTypeIsLoading}>
+      {/* Tour Type Select */}
+      <div className="min-w-[100px]">
+        <Select onValueChange={handleTourTypeChange} value={selectedTourType || ""} disabled={tourTypeIsLoading}>
           <SelectTrigger className="w-full">
-            <SelectValue />
+            <SelectValue placeholder="Select Tour Type" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -93,30 +81,15 @@ export default function TourFilters() {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Clear Filter Button */}
+      <div>
+        <Button size="sm" variant="outline" onClick={handleClearFilter}>
+          Clear Filter
+        </Button>
+      </div>
     </div>
   );
 
-  return (
-    <>
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block col-span-3 w-full h-[250px] border border-muted rounded-md p-5 lg:sticky top-10 shadow-xl">{FilterContent}</div>
-
-      {/* Mobile/Tablet Popup */}
-      <div className="lg:hidden w-full flex md:justify-end mb-4 shadow-xl">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="icon" className="fixed bottom-6 right-6 shadow-lg bg-primary rounded-full border-1 border-white w-12 h-12">
-              <Filter className="h-12 w-12" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[400px]">
-            <DialogHeader>
-              <DialogTitle>Filters</DialogTitle>
-            </DialogHeader>
-            {FilterContent}
-          </DialogContent>
-        </Dialog>
-      </div>
-    </>
-  );
+  return <div className=" w-full rounded-md p-5 sticky top-0 bg-white">{FilterContent}</div>;
 }

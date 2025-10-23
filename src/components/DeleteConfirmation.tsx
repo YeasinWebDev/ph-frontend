@@ -33,8 +33,8 @@ export function DeleteConfirmation({ children, onConfirm }: IProps) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm}>
+          <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleConfirm} className="cursor-pointer">
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

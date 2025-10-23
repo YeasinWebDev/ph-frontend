@@ -25,7 +25,14 @@ export const profileApi = baseApi.injectEndpoints({
         data: { name, email },
       }),
     }),
+
+    analytics: builder.query({
+      query: () => ({
+        url: "/user/analytics",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useUpdateProfileMutation, useVerifyUserMutation, useSendCodeMutation } = profileApi;
+export const { useUpdateProfileMutation, useVerifyUserMutation, useSendCodeMutation , useAnalyticsQuery } = profileApi;

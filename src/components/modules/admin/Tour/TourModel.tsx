@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 
 function TourModel({ isUpdate, tour }: { isUpdate?: boolean; tour?: any }) {
   const [open, setOpen] = React.useState(false);
-  const [images, setImages] = React.useState<File[] | []>([]);
+  const [images, setImages] = React.useState<(File | string)[]>([]);
   const { data: TourTypeData, isLoading: isTourTypeLoading } = useGetAllToursTypeQuery(undefined);
   const { data: divisionData, isLoading: isDivisionLoading } = useGetDivisionsQuery(undefined);
   const [addTour, { isLoading }] = useCreateTourMutation();
@@ -115,9 +115,24 @@ function TourModel({ isUpdate, tour }: { isUpdate?: boolean; tour?: any }) {
     }
   };
 
+  async function urlToFile(url: string, filename: string) {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const ext = blob.type.split("/")[1];
+    const name = filename || `image-${Date.now()}.${ext}`;
+    return new File([blob], name, { type: blob.type });
+  }
+
   const handleUpdateTour = async (data: any) => {
     try {
-      // Create tour data with correct date format
+      const existingUrls = images.filter((img) => typeof img === "string") as string[];
+      const newFiles = images.filter((img) => img instanceof File) as File[];
+
+      // ✅ convert existing urls to files
+      const existingFiles = await Promise.all(existingUrls.map((url, i) => urlToFile(url, `existing-${i}.jpg`)));
+
+      const allFiles = [...existingFiles, ...newFiles];
+
       const tourData = {
         ...data,
         startDate: formatISO(data.startDate),
@@ -129,26 +144,24 @@ function TourModel({ isUpdate, tour }: { isUpdate?: boolean; tour?: any }) {
         exclude: data.exclude.map((item: { value: string }) => item.value),
       };
 
-      // Create FormData
       const formData = new FormData();
 
-      // Append files
-      images.forEach((image) => {
-        formData.append("files", image);
+      allFiles.forEach((file) => {
+        formData.append("files", file);
       });
+
       formData.append("data", JSON.stringify(tourData));
 
-      // Send to backend
-      await updateTour({ id: tour._id, formData: formData }).unwrap();
+      await updateTour({ id: tour._id, formData }).unwrap();
 
-      toast.success("Tour Update successfully");
+      toast.success("Tour updated successfully");
       setOpen(false);
-      form.reset(defaultValues);
-      setImages([]);
     } catch (error) {
+      console.log(error);
       toast.error("Failed to update tour");
     }
   };
+
   const handleCreateTour = async (data: any) => {
     try {
       // Create tour data with correct date format
@@ -172,7 +185,6 @@ function TourModel({ isUpdate, tour }: { isUpdate?: boolean; tour?: any }) {
       });
 
       formData.append("data", JSON.stringify(tourData));
-      console.log(tourData);
 
       // Send to backend
       await addTour(formData).unwrap();
@@ -187,15 +199,15 @@ function TourModel({ isUpdate, tour }: { isUpdate?: boolean; tour?: any }) {
   };
 
   return (
-    <Dialog open={open} >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {isUpdate ? <Edit size={30} className="cursor-pointer bg-green-600 p-1 rounded" /> : <Button className="cursor-pointer">Add Tour</Button>}
+        {isUpdate ? <Edit size={30} color="white" className="cursor-pointer bg-green-600 p-1 rounded" /> : <Button className="cursor-pointer">Add Tour</Button>}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[925px] overflow-y-scroll h-[90vh] p-0 md:p-4">
         <DialogHeader className="flex items-center justify-center my-5">
           <DialogTitle className="text-2xl">Add Tour</DialogTitle>
         </DialogHeader>
-        <Card>
+        <Card className="border-0">
           <CardContent>
             <Form {...form}>
               <form id="add-tour-form" className="space-y-5" onSubmit={form.handleSubmit(handleSubmit)}>
@@ -491,9 +503,12 @@ function TourModel({ isUpdate, tour }: { isUpdate?: boolean; tour?: any }) {
               </form>
             </Form>
           </CardContent>
-          <CardFooter className="flex justify-end">
-            <Button type="submit" form="add-tour-form" disabled={isLoading || isUpdateLoading}>
-              {isLoading || isUpdateLoading ? <Loader /> : "Submit"}
+          <CardFooter className="flex justify-end gap-5">
+            <Button className="cursor-pointer" type="button" onClick={() => setOpen(false)} variant="outline">
+              Cancel
+            </Button>
+            <Button className="cursor-pointer" type="submit" form="add-tour-form" disabled={isLoading || isUpdateLoading}>
+              {isLoading || isUpdateLoading ? "Submitting..." : "Submit"}
             </Button>
           </CardFooter>
         </Card>

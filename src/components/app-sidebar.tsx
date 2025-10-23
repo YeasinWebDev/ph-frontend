@@ -6,7 +6,6 @@ import { useUserInfoQuery } from "@/redux/feature/auth/auth.api";
 import Logo from "@/assets/images/logo.png";
 import { useLocation } from "react-router";
 
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: user } = useUserInfoQuery({});
   const location = useLocation();

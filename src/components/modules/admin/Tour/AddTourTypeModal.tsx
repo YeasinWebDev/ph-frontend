@@ -9,8 +9,11 @@ import { toast } from "react-hot-toast";
 export function AddTourTypeModal() {
   const form = useForm();
   const [addTourType] = useCreateTourTypeMutation();
-
+  const nameValue = form.watch("name");
   const onSubmit = async (data: FieldValues) => {
+    if (!data.name) {
+      return toast.error("Please enter tour type name");
+    }
     const res = await addTourType({ name: data.name }).unwrap();
     if (res.success) {
       toast.success("Tour Type Added");
@@ -47,10 +50,12 @@ export function AddTourTypeModal() {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button className="cursor-pointer" variant="outline">
+                Cancel
+              </Button>
             </DialogClose>
             <DialogClose asChild>
-              <Button type="submit" form="add-tour-type">
+              <Button className="cursor-pointer" type="submit" form="add-tour-type" disabled={!nameValue || nameValue.trim() === ""}>
                 Save changes
               </Button>
             </DialogClose>
